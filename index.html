@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)http://sebastien.drouyer.com/jquery.flowchart-demo/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="./data/css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="./data/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="./data/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="./data/print.css" media="print">
+
+
+    <script>
+	/*change these values according to your Nexmo account*/
+	function getDefaultSender(obj,index){
+		var title = obj.operators[index].properties.title;
+		console.log("checking title "+title);
+		if(title.startsWith("FBMessenger"))
+			return "your-fb-page-id";
+		if(title.startsWith("Viber"))
+			return "your-viber-sender-id";
+		if(title.startsWith("SMS"))
+			return "your-sms-sender-id-or-number";
+		if(title.startsWith("WhatsApp"))
+			return "your-whatsapp-number";
+	}
+    </script>    
+    <script src="./data/jquery-1.10.2.js"></script>
+    <script src="./data/jquery-ui.js"></script>
+    
+    <script src="./data/jquery.panzoom.min.js"></script>
+    <script src="./data/jquery.mousewheel.min.js"></script>
+    
+    <script src="./data/jquery.flowchart.js"></script>
+    <script src="./data/main.js"></script>
+    <link rel="stylesheet" href="./data/jquery.flowchart.min.css">
+    <link rel="stylesheet" href="./data/custom.css">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Nexmo Dispatch API</title>
+    <style>
+    @import url(https://fonts.googleapis.com/css?family=Lato:100,300,400);
+#config {
+	position: absolute; 
+	top: 150px; 
+	z-index: 2000; 
+	visibility: hidden;
+	border-top: 8px solid grey;
+	border-left: black;
+	border-right: black;
+	border-bottom: black;
+}
+#conndel {
+	position: absolute; 
+	top: 150px; 
+	z-index: 2000; 
+	visibility: hidden;
+	height: 20px;
+	width: 20px;
+	
+}
+
+#example_9{
+	background-image: url(data/graph.png);
+}
+
+#status {
+	position: absolute; 
+	top: 100px; 
+	left: 300px;
+	z-index: 2000; 
+	width: 650px;
+	height: 350px;
+	background: grey;
+	border-top: 8px solid grey;
+	border-left: black;
+	border-right: black;
+	border-bottom: black;
+	opacity: 0.8;
+}
+#status_container{
+	visibility: hidden;
+}
+.loader {
+  border: 8px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 8px solid black;
+  width: 60px;
+  height: 60px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.read{
+ background-color: green;
+ font-size: 1.5em;
+ color: white;
+ margin: 10px;
+ border-radius: 25%/100%;
+ padding: 4px 4px;
+}
+
+.submitted{
+ background-color: blue;
+ font-size: 1.5em;
+ color: white;
+ margin: 10px;
+ border-radius: 25%/100%;
+ padding: 4px 4px;
+}
+
+.delivered{
+ background-color: lime;
+ font-size: 1.5em;
+ color: white;
+ margin: 10px;
+ border-radius: 25%/100%;
+ padding: 4px 4px;
+}
+
+.undelivered{
+ background-color: red;
+ font-size: 1.5em;
+ color: white;
+ margin: 10px;
+ border-radius: 25%/100%;
+ padding: 4px 4px;
+}
+
+.statustext{
+ font-size: 1.5em;
+ color:white;
+ margin: 20px;
+}
+
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+  color: #aca49c;
+  font-size: 0.875em;
+}
+
+input:focus::-webkit-input-placeholder, textarea:focus::-webkit-input-placeholder {
+  color: #bbb5af;
+}
+
+input::-moz-placeholder, textarea::-moz-placeholder {
+  color: #aca49c;
+  font-size: 0.875em;
+}
+
+input:focus::-moz-placeholder, textarea:focus::-moz-placeholder {
+  color: #bbb5af;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #aca49c;
+  font-size: 0.875em;
+}
+
+input:focus::placeholder, textarea::focus:placeholder {
+  color: #bbb5af;
+}
+
+input::-ms-placeholder, textarea::-ms-placeholder {
+  color: #aca49c;
+  font-size: 0.875em;
+}
+
+input:focus::-ms-placeholder, textarea:focus::-ms-placeholder {
+  color: #bbb5af;
+}
+
+/* on hover placeholder */
+
+input:hover::-webkit-input-placeholder, textarea:hover::-webkit-input-placeholder {
+  color: #e2dedb;
+  font-size: 0.875em;
+}
+
+input:hover:focus::-webkit-input-placeholder, textarea:hover:focus::-webkit-input-placeholder {
+  color: #cbc6c1;
+}
+
+input:hover::-moz-placeholder, textarea:hover::-moz-placeholder {
+  color: #e2dedb;
+  font-size: 0.875em;
+}
+
+input:hover:focus::-moz-placeholder, textarea:hover:focus::-moz-placeholder {
+  color: #cbc6c1;
+}
+
+input:hover::placeholder, textarea:hover::placeholder {
+  color: #e2dedb;
+  font-size: 0.875em;
+}
+
+input:hover:focus::placeholder, textarea:hover:focus::placeholder {
+  color: #cbc6c1;
+}
+
+input:hover::placeholder, textarea:hover::placeholder {
+  color: #e2dedb;
+  font-size: 0.875em;
+}
+
+input:hover:focus::-ms-placeholder, textarea:hover::focus:-ms-placeholder {
+  color: #cbc6c1;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  background: #e2dedb;
+  color: #b3aca7;
+}
+
+header {
+  position: relative;
+  margin: 100px 0 25px 0;
+  font-size: 2.3em;
+  text-align: center;
+  letter-spacing: 7px;
+}
+
+#form {
+  position: relative;
+  width: 300px;
+  /*margin: 50px auto 100px auto;*/
+}
+
+input {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.875em;
+  width: 250px;
+  height: 30px;
+  padding: 0px 15px 0px 15px;
+  
+  background: transparent;
+  outline: none;
+  color: #726659;
+  
+  border: solid 1px #b3aca7;
+  /*border-bottom: none;*/
+  
+  transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+}
+label {
+font-family: 'Lato', sans-serif;
+  font-size: 0.7em;
+  }
+select {
+	transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.875em;
+  padding: 0px 15px 0px 15px;
+  
+  background: transparent;
+  outline: none;
+  color: #726659;
+  
+}
+input:hover {
+  background: #b3aca7;
+  color: #e2dedb;
+}
+
+textarea {
+  width: 250px;
+  max-width: 470px;
+  height: 50px;
+  max-height: 110px;
+  padding: 15px;
+  
+  background: transparent;
+  outline: none;
+  
+  color: #726659;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.875em;
+  
+  border: solid 1px #b3aca7;
+  
+  transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+}
+
+textarea:hover {
+  background: #b3aca7;
+  color: #e2dedb;
+}
+
+#submit {
+  width: 141px;
+  
+  padding: 0;
+  margin: -5px 0px 0px 0px;
+  
+  font-family: 'Lato', sans-serif;
+  font-size: 0.875em;
+  color: #b3aca7;
+  
+  outline:none;
+  cursor: pointer;
+  
+  border: solid 1px #b3aca7;
+  border-top: none;
+}
+
+#submit:hover {
+  color: #e2dedb;
+}
+
+#remove {
+  width: 141px;
+  
+  padding: 0;
+  margin: -5px 0px 0px 0px;
+  
+  font-family: 'Lato', sans-serif;
+  font-size: 0.875em;
+  color: #b3aca7;
+  
+  outline:none;
+  cursor: pointer;
+  
+  border: solid 1px #b3aca7;
+  border-top: none;
+}
+
+#remove:hover {
+  color: #e2dedb;
+}
+    </style>
+  </head>
+
+  <body style="cursor: auto;">
+ <div id="about" style="position: absolute;bottom:0px;right:0px;margin-right:10px"> 
+	<label style="font-size:0.9em;">
+	Feedback: rajkiran.talusani@vonage.com [<a id="debug" target="_new" href="/workflow/debug.php">Debug</a>]
+	</label>
+ </div>
+<div class="flowchart-example">
+  <div>&nbsp;&nbsp;<img src="data/nexmo.png"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label style="font-size: 3em;vertical-align: bottom; color: #666"> Dispatch API Demo</label> </div> 
+  <div id="chart_container" style="overflow: hidden; position: relative;">
+  <div id="status_container">
+  	<div id="status">
+  	</div>
+  	<div id="closestatus" style="position: absolute;top: 430px;left:300px;z-index:2000">
+  		<button style="margin-left: 260px" onClick="closeWindow()"> Close window </button>
+  	</div>
+  </div>
+  <div id="config">
+  	 <form id="form" class="topBefore" >
+		
+		  <label> Sender: </label><input id="sender" type="text" placeholder="Number / ID of sender">
+		  <label> Destination: </label><input id="number" type="text" placeholder="Number where the message will be delivered">
+		  <label> Timeout: </label><input id="timeout" type="text" placeholder="Delay in seconds after which next channel will be tried">
+		  <label> Failure condition: </label>
+		  <select id="condition_fail" placeholder="fail condition">
+		  		<option value="delivered"> Delivered </option>
+		  		<option value="read"> Read </option>
+		  </select>
+		  <textarea id="message" type="text" placeholder="MESSAGE"></textarea>
+  		  <input id="submit" type="button" onClick="saveConfig()" value="Save">
+  		  <input id="remove" type="button" onClick="removeChannel()" value="Delete">
+  
+	</form>
+  </div>
+ 
+<div id="conndel">
+  	<button style="border: white; padding: 0px" onClick="removeLink()"> <img src="img/close.png"/></button>
+  </div>
+
+   <div class="flowchart-example-container flowchart-container" id="example_9" ><svg class="flowchart-links-layer"></svg><div class="flowchart-operators-layer unselectable"><div class="flowchart-operator flowchart-default-operator ui-draggable" style="top: 1000px; left: 1140px;"><div class="flowchart-operator-title ui-draggable-handle">Operator 2</div><div class="flowchart-operator-inputs-outputs"><div class="flowchart-operator-inputs"><div class="flowchart-operator-connector-set"><div class="flowchart-operator-connector"><div class="flowchart-operator-connector-label">Input 1</div><div class="flowchart-operator-connector-arrow"></div><div class="flowchart-operator-connector-small-arrow" style="border-left-color: transparent;"></div></div></div><div class="flowchart-operator-connector-set"><div class="flowchart-operator-connector"><div class="flowchart-operator-connector-label">Input 2</div><div class="flowchart-operator-connector-arrow"></div><div class="flowchart-operator-connector-small-arrow" style="border-left-color: transparent;"></div></div></div></div><div class="flowchart-operator-outputs"></div></div></div><div class="flowchart-operator flowchart-default-operator ui-draggable" style="top: 1240px; left: 1260px; width: 140px; right: auto; height: auto; bottom: auto;"><div class="flowchart-operator-title ui-draggable-handle">1 input</div><div class="flowchart-operator-inputs-outputs"><div class="flowchart-operator-inputs"><div class="flowchart-operator-connector-set"><div class="flowchart-operator-connector"><div class="flowchart-operator-connector-label">Input 1</div><div class="flowchart-operator-connector-arrow"></div><div class="flowchart-operator-connector-small-arrow" style="border-left-color: transparent;"></div></div></div></div><div class="flowchart-operator-outputs"></div></div></div><div class="flowchart-operator flowchart-default-operator ui-draggable" style="top: 800px; left: 460px;"><div class="flowchart-operator-title ui-draggable-handle">1 output</div><div class="flowchart-operator-inputs-outputs"><div class="flowchart-operator-inputs"></div><div class="flowchart-operator-outputs"><div class="flowchart-operator-connector-set"><div class="flowchart-operator-connector"><div class="flowchart-operator-connector-label">Output 1</div><div class="flowchart-operator-connector-arrow"></div><div class="flowchart-operator-connector-small-arrow" style="border-left-color: transparent;"></div></div></div></div></div></div></div><svg class="flowchart-temporary-link-layer" style="display: none;"><line x1="612" y1="852.0000305175781" x2="742" y2="1250.6107788085938" stroke-dasharray="6,6" stroke-width="4" stroke="black" fill="none"></line></svg></div>
+  </div>
+  <div class="draggable_operators">
+    <div class="draggable_operators_label">
+    </div>
+    <div class="draggable_operators_divs">
+      &nbsp;&nbsp;
+      <div id="wadiv"  class="draggable_operator ui-draggable ui-draggable-handle" data-nb-inputs="1" data-nb-outputs="1"><img title="Whatsapp" id="waimg" src="img/whatsapp.png"/></div>
+      <div id="fbdiv" class="draggable_operator ui-draggable ui-draggable-handle" data-nb-inputs="1" data-nb-outputs="1"><img id="fbimg" title="FB Messenger" src="img/fb.png"/></div>
+      <div id="viberdiv" class="draggable_operator ui-draggable ui-draggable-handle" data-nb-inputs="1" data-nb-outputs="1"><img id="viberimg" title="Viber" src="img/viber.jpg"/></div>
+      <div id="smsdiv" class="draggable_operator ui-draggable ui-draggable-handle" data-nb-inputs="1" data-nb-outputs="1"><img title="SMS" id="smsimg" src="img/sms.png"/></div>
+      <div id="linediv"  style="opacity: 0.3;" class="draggable_operator ui-draggable ui-draggable-handle" data-nb-inputs="1" data-nb-outputs="1"><img id="lineimg" src="img/line.png"/></div>
+      <div id="wechatdiv" style="opacity: 0.3;"  class="draggable_operator ui-draggable ui-draggable-handle" data-nb-inputs="1" data-nb-outputs="1"><img id="weimg" src="img/wechat.png"/></div>
+    </div>
+  </div>
+      <div id="iframeholder" style="width: 600px; position:absolute;">
+<label id="refresh" style="margin-left:  0px;font-size: 12px;">Refresh</label> 
+<input id="logenable" type="checkbox" checked onClick="enableDisableLog()" style="width: 20px;height: 15px;"> 
+		<!--textarea id="log" style="margin-top:20px;width:550px;max-height:200px;height:150px;margin-left:100px"> </textarea--> 
+		<iframe id="log" src="pretty_debug.php?count=20" style="margin-top:5px;width:600px;max-height:400px;height:400px;margin-left:80px"> </iframe> 
+      </div>
+  
+<script type="text/javascript">
+var properties = [];
+var vibercount=0;
+var smscount=0;
+var wacount=0;
+var fbcount=0;
+var currentOperator=-1;
+var resultHandle;
+var logRefresh;
+function showCallbacks(){
+	$.get("debug.php?count=20", function(data, status){
+   		 var lines = data.split("\n");
+		 lines = lines.reverse();
+                 for(var i=0; i < lines.length; i++){
+                         if(lines[i].trim() == "")
+                                 continue;;
+			document.getElementById('log').value = lines[i]+document.getElementById('log').value;
+		}
+    	});
+}
+
+function getWFType(obj,index)
+{
+	var title = obj.operators[index].properties.title;
+	console.log("checking title "+title);
+	if(title.startsWith("FBMessenger"))
+		return "fb";
+	if(title.startsWith("Viber"))
+		return "viber";
+	if(title.startsWith("SMS"))
+		return "sms";
+	if(title.startsWith("WhatsApp"))
+		return "wa";
+	return "skip";	
+}
+
+function createWFItem(obj,curOperator,isLast){
+	wfobj = {};
+	wfobj.from = {};
+	wfobj.to = {};
+	wfobj.message= {};
+	wfobj.message.content = {};
+	wfobj.message.content.type="text";
+	
+	var wftype = getWFType(obj,curOperator);
+	if(wftype=="skip"){
+		wfobj.from.type="startbutton";
+		return wfobj;
+	}
+	if(wftype=="fb"){
+		wfobj.from.type="messenger";
+		wfobj.from.id=properties[curOperator].sender;
+		wfobj.to.type="messenger";
+		wfobj.to.id=properties[curOperator].to;
+		wfobj.message.content.text=properties[curOperator].message;
+	}
+	else if(wftype=="sms"){
+		wfobj.from.type="sms";
+		wfobj.from.number=properties[curOperator].sender;
+		wfobj.to.type="sms";
+		wfobj.to.number=properties[curOperator].to;
+		wfobj.message.content.text=properties[curOperator].message;
+	}
+	else if(wftype=="viber"){
+		wfobj.from.type="viber_service_msg";
+		wfobj.from.id=properties[curOperator].sender;
+		wfobj.to.type="viber_service_msg";
+		wfobj.to.number=properties[curOperator].to;
+		wfobj.message.content.text=properties[curOperator].message;
+	}
+	else if(wftype=="wa"){
+		var msg = properties[curOperator].message;
+		msg = msg.replace(/{/g,"");
+		msg = msg.replace(/}/g,"");
+		var ishsm = false;
+		var company="";
+		var code="";
+		var duration="";
+		var parts = msg.split("code:");
+		if(parts.length>1){
+			company = parts[0].trim();
+			msg = parts[1];
+			parts = msg.split("Valid for");
+			if(parts.length > 1)
+			{
+				code = parts[0];
+				code = code.replace(".","").trim();;
+				duration = parts[1].replace("minutes","").trim();
+				ishsm = true;
+			}
+		}
+	
+			
+		wfobj.from.type="whatsapp";
+		wfobj.from.number=properties[curOperator].sender;
+		wfobj.to.type="whatsapp";
+		wfobj.to.number=properties[curOperator].to;
+		if(ishsm == true){
+			wfobj.message.content.type="template";
+			wfobj.message.content.template = {};
+			wfobj.message.content.template.name="whatsapp:hsm:technology:nexmo:verify";
+			//wfobj.message.content.template.parameters = [{"default":"\""+company+"\""},{"default":"\""+code+"\""},{"default":"\""+duration+"\""}];
+			wfobj.message.content.template.parameters = [{"default":company},{"default":code},{"default":duration}];
+		}
+		else{
+			wfobj.message.content.text=properties[curOperator].message;
+		}
+	}
+	if(!isLast){
+		wfobj.failover = {};
+		wfobj.failover.expiry_time=properties[curOperator].timeout;
+		wfobj.failover.condition_status=properties[curOperator].condition_fail;
+	}
+	return wfobj;
+}
+
+
+function createWFJSON(){
+
+	var $flowchart = $('#example_9');
+	var obj = $flowchart.flowchart('getData');
+
+	var jsonobj = {};
+	jsonobj.template="failover"
+	jsonobj.workflow=[];
+	
+	var connectorCount=0;
+	var curkey;
+	try{
+	for (var key in obj.links) {
+    		if (!obj.links.hasOwnProperty(key)) continue;
+    		var curOperator = obj.links[key].fromOperator;
+		var wfitem = createWFItem(obj,curOperator,false);
+		if(wfitem.from.type != "startbutton")
+			jsonobj.workflow[connectorCount] = wfitem;
+		else
+			continue;
+		curkey = key;
+		connectorCount++;
+	}
+	
+	jsonobj.workflow[connectorCount] = createWFItem(obj,obj.links[curkey].toOperator,true);
+	}catch(err){
+		alert("Error: please check input data");
+		return;
+	}
+	console.log(JSON.stringify(jsonobj));
+   
+	document.getElementById("startdiv").innerHTML="<div class='loader'></div>";
+	$.post("execute.php",
+    	{
+        	workflow: JSON.stringify(jsonobj)
+    	},
+    function(data, status){
+	console.log(data);
+	var json="";
+	try{
+		json = JSON.parse(data);
+	}
+	catch(err){
+		alert("something went wrong");
+		return;
+	}
+	if(json.dispatch_uuid){
+		document.getElementById("debug").href="/workflow/debug.php?wfname="+json.dispatch_uuid;
+		document.getElementById("status").innerHTML = "";
+		document.getElementById("status_container").style.visibility = "visible";
+		resultHandle = setInterval( function() { pollResults(json.dispatch_uuid); }, 2000 );
+	}
+	else{
+		document.getElementById("startdiv").innerHTML = "<button onclick=\"createWFJSON()\" style='border:0px;background-color:#eee;margin-left:30px'><img src='data/play.png' width='60px' height='60px'/></button>";
+		alert(data);
+	}
+    });
+}
+
+function closeWindow(){
+	document.getElementById("status_container").style.visibility = "hidden";
+}
+
+function pollResults(uuid){
+	$.get("logs/"+uuid, function(data, status){
+   		 var lines = data.split("\n");
+                 var msg = {};
+                 var status = {};
+                 for(var i=0; i < lines.length; i++){
+                         if(lines[i].trim() == "")
+                                 continue;;
+                         var json = JSON.parse(lines[i]);
+                         if(json.message_uuid){
+				 var to = json.to.id ? json.to.id : json.to.number;
+				 var channeltype = json.to.type;
+				 if(channeltype == "viber_service_msg")
+					channeltype="Viber";
+				 else if(channeltype == "sms")
+					channeltype="SMS";
+				 else if(channeltype=="messenger")
+					channeltype="FB Messenger";
+				 else if(channeltype=="whatsapp")
+					channeltype="WhatsApp";
+                                 msg[json.message_uuid] = "Sending message to <b>"+to+"</b> via <b>"+channeltype+"</b>";
+                                 status[json.message_uuid] = json.status;
+                         }
+                         else{
+                                if(json.dispatch_uuid){
+					console.log("Workflow complete");
+					clearTimeout(resultHandle);
+					document.getElementById("startdiv").innerHTML = "<button onclick=\"createWFJSON()\" style='border:0px;background-color:#eee;margin-left:30px'><img src='data/play.png' width='60px' height='60px'/></button>";
+				}
+                         }
+                 }
+		var fullmsg=""; 
+		for (var key in msg) {
+                	if (!msg.hasOwnProperty(key)) continue;
+			fullmsg += "<label class='statustext'>"+msg[key]+":</label> "
+			var classname="";
+			if(status[key]=="submitted")
+				classname="submitted";
+			else if(status[key] == "read")
+				classname="read";
+			else if(status[key] == "delivered")
+				classname = "delivered";
+			else
+				classname ="undelivered";
+			fullmsg += "<label class='"+classname+"'>"+status[key]+"</label><br/><br/>";
+        	} 
+		document.getElementById("status").innerHTML = fullmsg;
+	});
+}
+
+
+
+
+function saveConfig(){	
+	properties[currentOperator]= new Object();
+	properties[currentOperator].sender = document.getElementById("form").elements.namedItem("sender").value
+    properties[currentOperator].to = document.getElementById("form").elements.namedItem("number").value
+    properties[currentOperator].timeout=document.getElementById("form").elements.namedItem("timeout").value
+    properties[currentOperator].message=document.getElementById("form").elements.namedItem("message").value
+    properties[currentOperator].condition_fail=document.getElementById("form").elements.namedItem("condition_fail").value
+    document.getElementById('config').style.visibility="hidden";
+	return false;
+}
+function removeChannel(){
+	var $flowchart = $('#example_9');
+	$flowchart.flowchart('deleteOperator', currentOperator);
+	document.getElementById('config').style.visibility="hidden";
+}
+
+function removeLink(){
+	var $flowchart = $('#example_9');
+	$flowchart.flowchart('deleteLink', selectedLink);
+	document.getElementById('conndel').style.visibility="hidden";
+}
+function populateProperties(fc){
+	var $flowchart = $('#example_9');
+	var obj = $flowchart.flowchart('getData');
+	var wftype = getWFType(obj,currentOperator);
+	if(properties[currentOperator] == null){
+		var obj = fc.flowchart('getData');
+		var sender = getDefaultSender(obj,currentOperator);
+		document.getElementById("form").elements.namedItem("sender").value=sender;
+		document.getElementById("form").elements.namedItem("number").value="";
+		document.getElementById("form").elements.namedItem("timeout").value="";
+		if(wftype == "wa")
+			document.getElementById("form").elements.namedItem("message").value="{COMPANY} code: {0000}. Valid for {60} minutes";
+		else
+			document.getElementById("form").elements.namedItem("message").value="";
+		document.getElementById("form").elements.namedItem("condition_fail").value="delivered";
+		return;
+	}
+	document.getElementById("form").elements.namedItem("sender").value=properties[currentOperator].sender;
+	document.getElementById("form").elements.namedItem("number").value=properties[currentOperator].to;
+	document.getElementById("form").elements.namedItem("timeout").value=properties[currentOperator].timeout;
+	document.getElementById("form").elements.namedItem("message").value=properties[currentOperator].message;
+	document.getElementById("form").elements.namedItem("condition_fail").value=properties[currentOperator].condition_fail;
+	
+}
+
+
+function enableDisableLog(){
+	if(document.getElementById("logenable").checked){
+		logRefresh = setInterval(function(){document.getElementById("log").src+='';},5000);
+	}
+	else {
+		clearInterval(logRefresh);
+	}	
+}
+
+  $(document).ready(function() {
+ 
+    logRefresh = setInterval(function(){document.getElementById("log").src+='';},5000);
+    var $flowchart = $('#example_9');
+    var $container = $flowchart.parent();
+  
+    /*$('#wadiv').draggable( "disable" );    
+    $('#linediv').draggable( "disable" );    
+    $('#wechatdiv').draggable( "disable" );    
+    */
+    
+    var data = {
+     operators: {
+        operator1: {
+          top: 200,
+          left: 20,
+          properties: {
+            title: "<div id='startdiv'><button onclick=\"createWFJSON()\" style='border:0px;background-color:#eee;margin-left:30px'><img src='data/play.png' width='60px' height='60px'/></button></div>",
+            inputs: {},
+            outputs: {
+              output_1: {
+                label: 'Start ',
+              }
+            }
+          }
+        }
+     } 
+    };
+    
+
+    // Apply the plugin on a standard, empty div...
+    $flowchart.flowchart({
+      data: data,
+	onLinkSelect: function(linkId){
+      		document.getElementById("conndel").style.visibility="visible";
+      		selectedLink = linkId;
+      		var obj = $flowchart.flowchart('getData');
+      		console.log(obj.links[linkId].fromOperator+" "+linkId+" "+obj.links[linkId].fromSubConnector);
+      		var pos = $flowchart.flowchart('getConnectorPosition',obj.links[linkId].fromOperator,obj.links[linkId].fromConnector,obj.links[linkId].fromSubConnector);
+      		document.getElementById("conndel").style.top = pos.y +"px";
+      		document.getElementById("conndel").style.left = pos.x +"px";
+      		return true;
+      },
+      onLinkUnselect: function(linkId){
+      		document.getElementById("conndel").style.visibility="hidden";
+      		selectedLink = -1;
+      		return true;
+      },
+      onOperatorSelect: function(operatorId) {
+      	var odata = $flowchart.flowchart('getOperatorData',operatorId);
+	console.log(odata);
+	if(odata.properties.title.startsWith("<div"))
+		return;
+      	console.log('setting top'+odata.top+'px');
+      	var a = document.getElementById("chart_container");
+      	var b = document.getElementById("config");
+      	document.getElementById("config").style.top=odata.top+"px";
+      	
+      	var diff = b.clientHeight + parseInt(b.style.top) - (a.clientHeight + a.clientTop);
+      	var cfgTop = odata.top;
+      	if(diff > 0){
+      		cfgTop = odata.top - diff;
+      		console.log("cfgtop:"+cfgTop);
+      	}
+      	document.getElementById("config").style.top=cfgTop+"px";
+      	document.getElementById("config").style.left=odata.left+"px";
+        document.getElementById("config").style.visibility="visible";
+        console.log("operator selected "+operatorId); 
+        currentOperator= operatorId;
+        populateProperties($flowchart);
+      }
+    });
+
+    $flowchart.parent().siblings('.delete_selected_button').click(function() {
+      $flowchart.flowchart('deleteSelected');
+    });
+    
+    
+    var $draggableOperators = $('.draggable_operator');
+    
+    function getOperatorData($element) {
+      var nbInputs = parseInt($element.data('nb-inputs'));
+      var nbOutputs = parseInt($element.data('nb-outputs'));
+      var data = {
+        properties: {
+          title: $element.text(),
+          inputs: {},
+          outputs: {}
+        } 
+      };
+      
+      var i = 0;
+      for (i = 0; i < nbInputs; i++) {
+        data.properties.inputs['input_' + i] = {
+          label: 'O'
+        };
+      }
+      for (i = 0; i < nbOutputs; i++) {
+        data.properties.outputs['output_' + i] = {
+          label: 'O'
+        };
+      }
+      
+      return data;
+    }
+    
+    var operatorId = 0;
+        
+    $draggableOperators.draggable({
+        cursor: "move",
+        opacity: 0.7,
+        
+        helper: 'clone', 
+        appendTo: 'body',
+        zIndex: 1000,
+        
+        helper: function(e) {
+          var $this = $(this);
+          var data = getOperatorData($this);
+          return $flowchart.flowchart('getOperatorElement', data);
+        },
+        stop: function(e, ui) {
+            var $this = $(this);
+            var elOffset = ui.offset;
+            var containerOffset = $container.offset();
+            if (elOffset.left > containerOffset.left &&
+                elOffset.top > containerOffset.top && 
+                elOffset.left < containerOffset.left + $container.width() &&
+                elOffset.top < containerOffset.top + $container.height()) {
+
+                var flowchartOffset = $flowchart.offset();
+
+                var relativeLeft = elOffset.left - flowchartOffset.left;
+                var relativeTop = elOffset.top - flowchartOffset.top;
+
+                var positionRatio = $flowchart.flowchart('getPositionRatio');
+                relativeLeft /= positionRatio;
+                relativeTop /= positionRatio;
+                
+                var data = getOperatorData($this);
+                data.left = relativeLeft;
+                data.top = relativeTop;
+                var widgetType = $this.context.id;
+                if(widgetType == "viberdiv"){
+                	vibercount++;
+                	data.properties.title = "Viber"+vibercount;
+                }
+                else if(widgetType == "wadiv"){
+                	wacount++;
+                	data.properties.title = "WhatsApp"+wacount;
+                }
+                else if(widgetType == "fbdiv"){
+                	fbcount++;
+                	data.properties.title = "FBMessenger"+fbcount;
+                }
+                else {
+                	smscount++;
+                	data.properties.title = "SMS"+smscount;
+                }
+                $flowchart.flowchart('addOperator', data);
+                
+            }
+        }
+    });
+    
+    
+  });
+</script>
+ <!--input type="button" value="getdata" onClick="createWFJSON()"/-->
+</body></html>
