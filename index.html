@@ -750,6 +750,15 @@ function enableDisableLog(){
       		selectedLink = -1;
       		return true;
       },
+      onLinkCreate: function(id,data){
+		console.log(data);
+		return true;
+      },
+      onOperatorCreate: function(operatorId,x,y){
+		console.log("oprtator created - " + operatorId);
+		console.log(x);
+		return true;
+      },
       onOperatorSelect: function(operatorId) {
       	var odata = $flowchart.flowchart('getOperatorData',operatorId);
 	console.log(odata);
@@ -809,7 +818,7 @@ function enableDisableLog(){
     }
     
     var operatorId = 0;
-        
+    var prevOperatorId=0;
     $draggableOperators.draggable({
         cursor: "move",
         opacity: 0.7,
@@ -861,8 +870,31 @@ function enableDisableLog(){
                 	smscount++;
                 	data.properties.title = "SMS"+smscount;
                 }
-                $flowchart.flowchart('addOperator', data);
-                
+		prevOperatorId = operatorId;
+                operatorId = $flowchart.flowchart('addOperator', data);
+                console.log("operator id:"+operatorId);
+		console.log(data);
+		if(operatorId==0){
+			var d = {};
+			d.fromOperator="operator1";
+			d.fromConnector="output_1";
+			d.fromSubConnector=0;
+			d.toOperator=operatorId;
+			d.toConnector="input_0";
+			d.toSubConnector=0;
+			$flowchart.flowchart('addLink',d);
+		}
+		else{
+			var d = {};
+			d.fromOperator=prevOperatorId;
+			d.fromConnector="output_0";
+			d.fromSubConnector=0;
+			d.toOperator=operatorId;
+			d.toConnector="input_0";
+			d.toSubConnector=0;
+			$flowchart.flowchart('addLink',d);
+
+		}
             }
         }
     });
